@@ -14,6 +14,7 @@ import java.util.Map;
  * TODO: Replace all uses of this class before publishing your app.
  */
 public class HistoryContent {
+
     public static final List<HistoryItem> ITEMS = new ArrayList<HistoryItem>();
 
     public static void addItem(HistoryItem item) {
@@ -43,6 +44,14 @@ public class HistoryContent {
         public String toString() {
             return this.fromVal + " " + this.fromUnits + " = " + this.toVal + " " + this.toUnits;
         }
+    }
+
+    static {
+        DateTime now = DateTime.now();
+        HistoryContent.addItem(new HistoryItem(2.0, 1.829, "Length", "Yards", "Meters", now.minusDays(1)));
+        HistoryContent.addItem(new HistoryItem(1.0, 3.785, "Volume", "Gallons", "Liters", now.minusDays(1)));
+        HistoryContent.addItem(new HistoryItem(2.0, 1.829, "Length", "Yards", "Meters", now.plusDays(1)));
+        HistoryContent.addItem(new HistoryItem(1.0, 3.785, "Volume", "Gallons", "Liters", now.plusDays(1)));
     }
 
 }
