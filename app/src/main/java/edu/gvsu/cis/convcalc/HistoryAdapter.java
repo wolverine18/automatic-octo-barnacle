@@ -8,21 +8,21 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import edu.gvsu.cis.convcalc.HistoryFragment.OnListFragmentInteractionListener;
-import edu.gvsu.cis.convcalc.dummy.DummyContent.DummyItem;
+import edu.gvsu.cis.convcalc.dummy.HistoryContent.HistoryItem;
 
 import java.util.List;
 
 /**
- * {@link RecyclerView.Adapter} that can display a {@link DummyItem} and makes a call to the
+ * {@link RecyclerView.Adapter} that can display a {@link HistoryItem} and makes a call to the
  * specified {@link OnListFragmentInteractionListener}.
  * TODO: Replace the implementation with code for your data type.
  */
 public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHolder> {
 
-    private final List<DummyItem> mValues;
+    private final List<HistoryItem> mValues;
     private final OnListFragmentInteractionListener mListener;
 
-    public HistoryAdapter(List<DummyItem> items, OnListFragmentInteractionListener listener) {
+    public HistoryAdapter(List<HistoryItem> items, OnListFragmentInteractionListener listener) {
         mValues = items;
         mListener = listener;
     }
@@ -37,8 +37,8 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
     @Override
     public void onBindViewHolder(final ViewHolder holder, int position) {
         holder.mItem = mValues.get(position);
-        holder.mIdView.setText(mValues.get(position).id);
-        holder.mContentView.setText(mValues.get(position).content);
+        holder.mP1.setText(holder.mItem.toString());
+        holder.mDateTime.setText(holder.mItem.timestamp.toString());
 
         holder.mView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -59,20 +59,20 @@ public class HistoryAdapter extends RecyclerView.Adapter<HistoryAdapter.ViewHold
 
     public class ViewHolder extends RecyclerView.ViewHolder {
         public final View mView;
-        public final TextView mIdView;
-        public final TextView mContentView;
-        public DummyItem mItem;
+        public final TextView mP1;
+        public final TextView mDateTime;
+        public HistoryItem mItem;
 
         public ViewHolder(View view) {
             super(view);
             mView = view;
-            mIdView = (TextView) view.findViewById(R.id.item_number);
-            mContentView = (TextView) view.findViewById(R.id.content);
+            mP1 = (TextView) view.findViewById(R.id.p1);
+            mDateTime = (TextView) view.findViewById(R.id.timestamp);
         }
 
         @Override
         public String toString() {
-            return super.toString() + " '" + mContentView.getText() + "'";
+            return super.toString() + " '" + mDateTime.getText() + "'";
         }
     }
 }

@@ -1,5 +1,6 @@
 package edu.gvsu.cis.convcalc;
 
+import android.content.Intent;
 import android.os.Bundle;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -7,7 +8,7 @@ import com.google.android.material.snackbar.Snackbar;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
-import edu.gvsu.cis.convcalc.dummy.DummyContent;
+import edu.gvsu.cis.convcalc.dummy.HistoryContent;
 
 import android.view.View;
 
@@ -31,8 +32,13 @@ public class HistoryActivity extends AppCompatActivity implements HistoryFragmen
     }
 
     @Override
-    public void onListFragmentInteraction(DummyContent.DummyItem item) {
+    public void onListFragmentInteraction(HistoryContent.HistoryItem item) {
         System.out.println("Interact!");
+        Intent intent = new Intent();
+        String[] vals = {item.fromVal.toString(), item.toVal.toString(), item.mode, item.fromUnits, item.toUnits};
+        intent.putExtra("item", vals);
+        setResult(MainActivity.HISTORY_RESULT,intent);
+        finish();
     }
 
 }
