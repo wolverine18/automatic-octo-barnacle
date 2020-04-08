@@ -3,17 +3,21 @@
     package="edu.gvsu.cis.convcalc">
 
     <application
+        android:name=".ConversionApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:name=".ConversionApp">
+        android:theme="@style/AppTheme">
+        <service
+            android:name=".webservice.WeatherService"
+            android:exported="false"></service>
+
         <activity
             android:name=".HistoryActivity"
             android:label="@string/title_activity_history"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
