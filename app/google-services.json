@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "864964086256",
+    "firebase_url": "https://convcalc-35fad.firebaseio.com",
+    "project_id": "convcalc-35fad",
+    "storage_bucket": "convcalc-35fad.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:864964086256:android:b1e6cc3cdd06dda10d7535",
+        "android_client_info": {
+          "package_name": "edu.gvsu.cis.convcalc"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "864964086256-i6s6t78nol8953b0p7au42qjmtfabtqv.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAtApMJcjJh4SC3iNNKlg_-LQytxUjvHGE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "864964086256-i6s6t78nol8953b0p7au42qjmtfabtqv.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
