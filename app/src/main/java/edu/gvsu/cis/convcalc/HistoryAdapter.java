@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.truizlop.sectionedrecyclerview.SectionedRecyclerViewAdapter;
 
+import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
@@ -37,7 +38,8 @@ public class HistoryAdapter extends SectionedRecyclerViewAdapter<HistoryAdapter.
         DateTimeFormatter fmt = DateTimeFormat.forPattern("yyyy-MM-dd");
 
         for (HistoryItem hi : items) {
-            String key = "Entries for " + fmt.print(hi.timestamp);
+            DateTime t = DateTime.parse(hi.timestamp);
+            String key = "Entries for " + fmt.print(t);
             List<HistoryItem> list = this.dayValues.get(key);
             if (list == null) {
                 list = new ArrayList<HistoryItem>();

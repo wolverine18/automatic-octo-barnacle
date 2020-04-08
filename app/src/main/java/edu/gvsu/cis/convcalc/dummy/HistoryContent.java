@@ -27,11 +27,22 @@ public class HistoryContent {
         public final String mode;
         public final String fromUnits;
         public final String toUnits;
+        public String _key;
 
-        public final DateTime timestamp;
+        public final String timestamp;
+
+        public HistoryItem() {
+            this.fromVal = 0.0;
+            this.toVal = 0.0;
+            this.mode = "";
+            this.fromUnits = "";
+            this.toUnits = "";
+            this.timestamp = new DateTime().toString();
+            this._key = "";
+        }
 
         public HistoryItem(Double fromVal, Double toVal, String mode,
-                           String fromUnits, String toUnits, DateTime timestamp) {
+                           String fromUnits, String toUnits, String timestamp) {
             this.fromVal = fromVal;
             this.toVal = toVal;
             this.mode = mode;
@@ -45,13 +56,4 @@ public class HistoryContent {
             return this.fromVal + " " + this.fromUnits + " = " + this.toVal + " " + this.toUnits;
         }
     }
-
-    static {
-        DateTime now = DateTime.now();
-        HistoryContent.addItem(new HistoryItem(2.0, 1.829, "Length", "Yards", "Meters", now.minusDays(1)));
-        HistoryContent.addItem(new HistoryItem(1.0, 3.785, "Volume", "Gallons", "Liters", now.minusDays(1)));
-        HistoryContent.addItem(new HistoryItem(2.0, 1.829, "Length", "Yards", "Meters", now.plusDays(1)));
-        HistoryContent.addItem(new HistoryItem(1.0, 3.785, "Volume", "Gallons", "Liters", now.plusDays(1)));
-    }
-
 }

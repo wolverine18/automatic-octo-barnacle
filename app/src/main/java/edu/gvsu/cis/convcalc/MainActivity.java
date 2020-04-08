@@ -12,7 +12,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
+
+import java.util.ArrayList;
+import java.util.List;
 
 import edu.gvsu.cis.convcalc.UnitsConverter.LengthUnits;
 import edu.gvsu.cis.convcalc.UnitsConverter.VolumeUnits;
@@ -38,10 +49,14 @@ public class MainActivity extends AppCompatActivity {
     private TextView fromUnits;
     private TextView title;
 
+    DatabaseReference topRef;
+    public static List<HistoryContent.HistoryItem> allHistory;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        allHistory = new ArrayList<HistoryContent.HistoryItem>();
 
         calcButton = findViewById(R.id.calcButton);
         clearButton = findViewById(R.id.clearButton);
@@ -97,8 +112,20 @@ public class MainActivity extends AppCompatActivity {
                 toField.getText().clear();
             }
         });
+    }
 
-//
+    @Override
+    public void onResume(){
+        super.onResume();
+        allHistory.clear();
+        topRef = FirebaseDatabase.getInstance().getReference("history");
+        topRef.addChildEventListener (chEvListener);
+    }
+
+    @Override
+    public void onPause(){
+        super.onPause();
+        topRef.removeEventListener(chEvListener);
     }
 
     private void doConversion() {
@@ -115,6 +142,7 @@ public class MainActivity extends AppCompatActivity {
             dest = fromField;
         }
 
+        DateTimeFormatter fmt = ISODateTimeFormat.dateTime();
         if (dest != null) {
             switch(mode) {
                 case Length:
@@ -130,9 +158,10 @@ public class MainActivity extends AppCompatActivity {
                     Double cVal = UnitsConverter.convert(dVal, fUnits, tUnits);
                     dest.setText(Double.toString(cVal));
                     // remember the calculation.
-                    HistoryContent.HistoryItem item = new HistoryContent.HistoryItem(dVal, cVal, mode.toString(), fromUnits.getText().toString(),
-                            toUnits.getText().toString(), DateTime.now());
+                    HistoryContent.HistoryItem item = new HistoryContent.HistoryItem(dVal, cVal, mode.toString(),
+                            fUnits.toString(), tUnits.toString(), fmt.print(DateTime.now()));
                     HistoryContent.addItem(item);
+                    topRef.push().setValue(item);
                     break;
                 case Volume:
                     VolumeUnits vtUnits, vfUnits;
@@ -147,9 +176,10 @@ public class MainActivity extends AppCompatActivity {
                     Double vcVal = UnitsConverter.convert(vdVal, vfUnits, vtUnits);
                     dest.setText(Double.toString(vcVal));
                     // remember the calculation.
-                    HistoryContent.HistoryItem vitem = new HistoryContent.HistoryItem(vdVal, vcVal, mode.toString(), fromUnits.getText().toString(),
-                            toUnits.getText().toString(), DateTime.now());
+                    HistoryContent.HistoryItem vitem = new HistoryContent.HistoryItem(vdVal, vcVal, mode.toString(),
+                            vfUnits.toString(), vtUnits.toString(), fmt.print(DateTime.now()));
                     HistoryContent.addItem(vitem);
+                    topRef.push().setValue(vitem);
                     break;
             }
         }
@@ -211,4 +241,40 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private ChildEventListener chEvListener = new ChildEventListener() {
+        @Override
+        public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+            HistoryContent.HistoryItem entry =
+                    (HistoryContent.HistoryItem) dataSnapshot.getValue(HistoryContent.HistoryItem.class);
+            entry._key = dataSnapshot.getKey();
+            allHistory.add(entry);
+        }
+
+        @Override
+        public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+        }
+
+        @Override
+        public void onChildRemoved(DataSnapshot dataSnapshot) {
+            HistoryContent.HistoryItem entry =
+                    (HistoryContent.HistoryItem) dataSnapshot.getValue(HistoryContent.HistoryItem.class);
+            List<HistoryContent.HistoryItem> newHistory = new ArrayList<HistoryContent.HistoryItem>();
+            for (HistoryContent.HistoryItem t : allHistory) {
+                if (!t._key.equals(dataSnapshot.getKey())) {
+                    newHistory.add(t);
+                }
+            }
+            allHistory = newHistory;
+        }
+
+        @Override
+        public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+        }
+
+        @Override
+        public void onCancelled(DatabaseError databaseError) {
+
+        }
+    };
 }
