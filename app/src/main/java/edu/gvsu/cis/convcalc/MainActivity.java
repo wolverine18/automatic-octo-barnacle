@@ -1,11 +1,17 @@
 package edu.gvsu.cis.convcalc;
 
+import android.Manifest;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -15,6 +21,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -29,6 +36,7 @@ import org.joda.time.format.ISODateTimeFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import androidx.core.app.ActivityCompat;
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 import edu.gvsu.cis.convcalc.UnitsConverter.LengthUnits;
 import edu.gvsu.cis.convcalc.UnitsConverter.VolumeUnits;
@@ -36,6 +44,12 @@ import edu.gvsu.cis.convcalc.dummy.HistoryContent;
 import edu.gvsu.cis.convcalc.webservice.WeatherService;
 
 public class MainActivity extends AppCompatActivity {
+
+    private final int MY_PERMISSIONS_REQUEST_LOCATION = 1;
+    LocationManager locationManager;
+    Location location;
+    String latitude = "42.963686";
+    String longitude = "-85.888595";
 
     public static int SETTINGS_RESULT = 1;
     public static int HISTORY_RESULT = 2;
@@ -84,8 +98,16 @@ public class MainActivity extends AppCompatActivity {
         temperature = findViewById(R.id.tvTemp);
         weatherIcon = findViewById(R.id.ivWeather);
 
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS_REQUEST_LOCATION);
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, MY_PERMISSIONS_REQUEST_LOCATION);
+        } else {
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 2000, 10, locationListener);
+        }
+
         calcButton.setOnClickListener(v -> {
-            WeatherService.startGetWeather(this, "42.963686", "-85.888595", "p1");
+            WeatherService.startGetWeather(this, latitude, longitude, "p1");
             doConversion();
         });
 
@@ -127,6 +149,43 @@ public class MainActivity extends AppCompatActivity {
                 toField.getText().clear();
             }
         });
+    }
+
+
+    private final LocationListener locationListener = new LocationListener() {
+        public void onLocationChanged(Location location) {
+            longitude = String.valueOf(location.getLongitude());
+            latitude = String.valueOf(location.getLatitude());
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+
+        }
+    };
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults){
+        switch (requestCode){
+            case MY_PERMISSIONS_REQUEST_LOCATION: {
+                if (grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED){
+                    Toast.makeText(this, "Location Permission Granted", Toast.LENGTH_SHORT).show();
+                }else{
+                    Toast.makeText(MainActivity.this, "Location Permission Denied", Toast.LENGTH_SHORT).show();
+                }
+                return;
+            }
+        }
     }
 
     @Override
