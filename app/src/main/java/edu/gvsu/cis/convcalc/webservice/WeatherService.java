@@ -1,12 +1,13 @@
+
 package edu.gvsu.cis.convcalc.webservice;
 
 import android.app.IntentService;
 import android.content.Intent;
 import android.content.Context;
-import android.util.Log;
 
 import androidx.localbroadcastmanager.content.LocalBroadcastManager;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -27,8 +28,7 @@ public class WeatherService extends IntentService {
     private static final String TAG = "WeatherService";
     // IntentService can perform, e.g. ACTION_FETCH_NEW_ITEMS
     private static final String ACTION_WEATHER_AT = "edu.gvsu.cis.webservice.action.WEATHER_AT";
-    // TODO: Update the base url with your own private key.
-    private static final String BASE_URL = "https://api.darksky.net/forecast/YOUR_DARKSKY_KEY_GOES_HERE";
+    private static final String BASE_URL = "https://api.openweathermap.org/data/2.5/weather?units=imperial&";
     public static final String BROADCAST_WEATHER = "edu.gvsu.cis.webservice.action.BROADCAST";
     private static final String EXTRA_KEY = "edu.gvsu.cis.webservice.extra.KEY";
     private static final String EXTRA_LAT = "edu.gvsu.cis.webservice.extra.LAT";
@@ -73,7 +73,8 @@ public class WeatherService extends IntentService {
     private void fetchWeatherData(String key, String lat, String lon) {
         try {
             // TODO: Format the url based on the input params
-            URL url = new URL(BASE_URL + "UPDATE THIS PART OF THE URL");
+            URL url = new URL(BASE_URL + "lat=" + lat + "&lon=" + lon + "&appid=" + APIKey.OPEN_WEATHER_KEY);
+
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
             conn.setReadTimeout(5000 /* milliseconds */);
             conn.setConnectTimeout(10000 /* milliseconds */);
@@ -92,14 +93,23 @@ public class WeatherService extends IntentService {
                     baos.write(buffer, 0, len);
                 }
                 JSONObject data = new JSONObject(new String(baos.toByteArray()));
-                JSONObject current = data.getJSONObject("currently");
+                JSONObject main = data.getJSONObject("main");
+                JSONArray weather = data.getJSONArray("weather");
+                JSONObject weatherObj = weather.getJSONObject(0);
 
-                // TODO: extract the values you need out of current
-
+                // TODO: extract the values you need out of main and weather...
+                //temp from main
+                //description from weather
+                //icon from weather
+                Double temp = main.getDouble("temp");
+                String descr = weatherObj.getString("description");
+                String icon = weatherObj.getString("icon");
                 Intent result = new Intent(BROADCAST_WEATHER);
 
-                // TODO: use putExtra to add the extracted values to your broadcast
-
+                // TODO: use putExtra to add the extracted values to your broadcast.
+                result.putExtra("TEMPERATURE", temp);
+                result.putExtra("SUMMARY", descr);
+                result.putExtra("ICON", icon);
                 result.putExtra("KEY", key);
                 LocalBroadcastManager.getInstance(this).sendBroadcast(result);
             }

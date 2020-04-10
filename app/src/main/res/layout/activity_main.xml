@@ -138,9 +138,10 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
         android:layout_marginTop="32dp"
+        android:visibility="invisible"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/calcButton"
-        app:srcCompat="@drawable/clear_day" />
+        app:srcCompat="@drawable/img01d" />
 
     <TextView
         android:id="@+id/tvTemp"
@@ -149,6 +150,8 @@
         android:layout_marginStart="8dp"
         android:layout_marginTop="48dp"
         android:text="Temp"
+        android:textSize="36sp"
+        android:visibility="invisible"
         app:layout_constraintStart_toEndOf="@+id/ivWeather"
         app:layout_constraintTop_toBottomOf="@+id/clearButton" />
 
@@ -157,8 +160,9 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="32dp"
+        android:layout_marginTop="24dp"
         android:text="Current"
+        android:visibility="invisible"
         app:layout_constraintStart_toEndOf="@+id/ivWeather"
         app:layout_constraintTop_toBottomOf="@+id/tvTemp" />
 
